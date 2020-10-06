@@ -1,0 +1,40 @@
+.square {
+  border: 3px solid #787878;
+  background: transparent;
+  font-size: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.square:hover {
+  cursor: pointer;
+}
+
+.square:hover:disabled {
+  cursor: auto;
+}
+
+.squareNoTop {
+  border-top: none;
+}
+
+.squareNoBottom {
+  border-bottom: none;
+}
+
+.squareNoLeft {
+  border-left: none;
+}
+
+.squareNoRight {
+  border-right: none;
+}
+
+.player {
+  color: #e56b6f;
+}
+
+.ai {
+  color: #15616d;
+}
