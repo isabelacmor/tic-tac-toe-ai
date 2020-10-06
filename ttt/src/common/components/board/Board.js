@@ -77,6 +77,7 @@ class Board extends React.Component {
   };
 
   recurseMinimax = (board, player) => {
+    // Base case: check if there is a winner or if there are no more empty cells
     var winner = this.checkWin(board);
     if (winner === AI) {
       return { score: 1, board };
@@ -84,34 +85,39 @@ class Board extends React.Component {
       return { score: -1, board };
     } else if (this.getAvailableCells(board).length === 0) {
       return { score: 0, board };
-    } else {
-      // Next states
-      var nextVal = null;
-      var nextBoard = null;
-
-      for (var i = 0; i < board.length; i++) {
-        if (board[i] === null) {
-          board[i] = player;
-
-          var value = this.recurseMinimax(
-            board,
-            player === PLAYER ? AI : PLAYER
-          ).score;
-          if (
-            (player === AI && (nextVal == null || value > nextVal)) ||
-            (player === PLAYER && (nextVal == null || value < nextVal))
-          ) {
-            nextBoard = Object.assign([], board);
-            nextVal = value;
-          }
-          board[i] = null;
-        }
-      }
-      return { score: nextVal, board: nextBoard };
     }
+
+    // Calculate the next board state
+    var nextVal = null;
+    var nextBoard = null;
+
+    for (var i = 0; i < board.length; i++) {
+      // If the cell is empty, set it to the current player
+      if (board[i] === null) {
+        board[i] = player;
+
+        // Find the score for setting this cell
+        var value = this.recurseMinimax(board, player === PLAYER ? AI : PLAYER)
+          .score;
+
+        // If this score is better than the current value, showing this is a favorable move
+        if (
+          (player === AI && (nextVal == null || value > nextVal)) ||
+          (player === PLAYER && (nextVal == null || value < nextVal))
+        ) {
+          nextBoard = Object.assign([], board);
+          nextVal = value;
+        }
+
+        // Reset the board
+        board[i] = null;
+      }
+    }
+    return { score: nextVal, board: nextBoard };
   };
 
   getAvailableCells = (gameState) => {
+    // Return an array of indices that are empty
     const availableCells = gameState.reduce((acc, item, index) => {
       if (item === null) {
         acc.push(index);
@@ -123,6 +129,7 @@ class Board extends React.Component {
   };
 
   checkWin = (gameState) => {
+    // All possible winning combinations
     const possibleWins = [
       [0, 1, 2],
       [3, 4, 5],
@@ -136,6 +143,7 @@ class Board extends React.Component {
 
     for (let i = 0; i < possibleWins.length; i++) {
       const [a, b, c] = possibleWins[i];
+      // Check if the values all match
       if (
         gameState[a] !== null &&
         gameState[a] === gameState[b] &&
@@ -145,6 +153,7 @@ class Board extends React.Component {
       }
     }
 
+    // If there was no winner and there's no empty cells left, it's a tie.
     if (this.getAvailableCells(gameState).length === 0) {
       return TIE;
     }
